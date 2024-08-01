@@ -133,3 +133,14 @@ button:hover {
     margin: 0.5rem;
   }
 }
+
+/* In your CSS file (e.g., App.css) */
+.highlight {
+  animation: highlightAnimation 1s ease-in-out;
+}
+
+@keyframes highlightAnimation {
+  0% { color: #000; }
+  50% { color: #ff0000; }
+  100% { color: #000; }
+}

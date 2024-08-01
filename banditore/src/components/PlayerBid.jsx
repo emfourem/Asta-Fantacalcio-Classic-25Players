@@ -4,22 +4,20 @@ import { Container, Row, Col, Card, Alert, Button, Table } from 'react-bootstrap
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import io from 'socket.io-client';
+import '../App.css'; // Import the CSS file
 
-const socket = io('http://localhost:5000'); // Replace with your PC's IP address
+const socket = io('http://localhost:5000'); // Replace with your server's IP address
 
 // Helper function to calculate the remaining budget and maximum bid
 function calculateMaxBid(team) {
-  // Calculate total spent on players
   const totalSpent = team.p.reduce((sum, player) => sum + player.amount, 0) +
     team.d.reduce((sum, player) => sum + player.amount, 0) +
     team.c.reduce((sum, player) => sum + player.amount, 0) +
     team.a.reduce((sum, player) => sum + player.amount, 0);
 
-  // Calculate the number of players currently in the team
   const currentPlayerCount = team.p.length + team.d.length + team.c.length + team.a.length;
-  const remainingPlayers = 25 - currentPlayerCount -1; // Number of players in squad minus the current number
+  const remainingPlayers = 25 - currentPlayerCount - 1; // Adjust for 1 more player
 
-  // Calculate the maximum bid a team can make
   const minRequiredForPlayers = remainingPlayers;
   const maxBid = team.credit - totalSpent - minRequiredForPlayers;
 
@@ -46,19 +44,33 @@ function BidTimer({ timer }) {
   );
 }
 
+// BidResult Component
 function BidResult({ bid, showResult }) {
+  const [highlight, setHighlight] = useState(false);
+
+  useEffect(() => {
+    if (bid) {
+      setHighlight(true);
+      const timer = setTimeout(() => {
+        setHighlight(false);
+      }, 1000); // Highlight for 1 second
+
+      return () => clearTimeout(timer);
+    }
+  }, [bid]);
+
   const messageStyle = {
-    fontSize: '1.5rem',  // Adjust font size as needed
-    fontWeight: 'bold',  // Optional: make text bold
+    fontSize: '1.5rem', // Adjust font size as needed
+    fontWeight: 'bold', // Optional: make text bold
   };
 
   return showResult ? (
-    <Alert variant="success" className="text-center" style={messageStyle}>
+    <Alert variant="success" className={`text-center ${highlight ? 'highlight' : ''}`} style={messageStyle}>
       Vincente: {bid.teamName} - Prezzo: {bid.amount}
     </Alert>
   ) : (
     bid && (
-      <Alert variant="info" className="mb-3 text-center" style={messageStyle}>
+      <Alert variant="info" className={`mb-3 text-center ${highlight ? 'highlight' : ''}`} style={messageStyle}>
         Ultima offerta: {bid.teamName} - Prezzo: {bid.amount}
       </Alert>
     )
@@ -111,16 +123,21 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
   const [bid, setBid] = useState(null); // Store only the last bid
   const [timer, setTimer] = useState(5); // Initialize timer with 5 seconds
   const [showResult, setShowResult] = useState(false); // To show result after timer ends
+  const [isFinalBid, setIsFinalBid] = useState(false); // To indicate if the bid is final
 
   useEffect(() => {
     socket.on('new_bid', (data) => {
       console.log('New bid received:', data);
 
+      if (isFinalBid) {
+        return; // Discard any new bids after the timer has elapsed
+      }
+
       const team = teams.find(t => t.name === data.name);
       if (!team) return;
 
       const maxBid = calculateMaxBid(team);
-      const newBidAmount = (bid?.amount || 0) + 1; // Increment bid amount
+      const newBidAmount = (bid?.amount || 0) + 1;
 
       if (newBidAmount > maxBid) {
         return;
@@ -131,9 +148,8 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
         'D': 'd',
         'C': 'c',
         'A': 'a'
-      }[player.ruolo]; // Map player's role to corresponding lowercase
+      }[player.ruolo];
 
-      // Calculate the number of players required in each role
       const rosterRequirements = {
         p: 3,
         d: 8,
@@ -141,57 +157,51 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
         a: 6
       };
 
-      // Check if the team already has enough players for this role
       if (team[roleList].length >= rosterRequirements[roleList]) {
         return;
       }
 
       setBid({
         teamName: team.name,
-        amount: newBidAmount // Set new bid amount
+        amount: newBidAmount
       });
 
       setTimer(5); // Reset timer
-      setShowResult(false); // Hide result during timer
+      setShowResult(false);
     });
 
     return () => {
       socket.off('new_bid');
     };
-  }, [bid, player, teams]);
+  }, [bid, player, teams, isFinalBid]);
 
   useEffect(() => {
     if (!bid || !player) return;
 
-    // Update teams only after the timer ends
     const updateTeams = () => {
       const { teamName, amount } = bid;
-      const role = player.ruolo; // Player's role (e.g., 'P', 'D', 'C', 'A')
+      const role = player.ruolo;
 
       const lowercaseRole = {
         'P': 'p',
         'D': 'd',
         'C': 'c',
         'A': 'a'
-      }[role]; // Convert role to lowercase
+      }[role];
 
       if (!lowercaseRole) {
-        // Error in the role, exit
         return;
       }
 
-      // Find the team and calculate the maximum bid
       const team = teams.find(t => t.name === teamName);
       if (!team) return;
 
       const maxBid = calculateMaxBid(team);
 
       if (amount > maxBid) {
-        // If the bid exceeds the maximum bid, discard it
         return;
       }
 
-      // Update the teams array
       const updatedTeams = teams.map(t => {
         if (t.name === teamName) {
           return {
@@ -204,7 +214,7 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
                 amount: amount
               }
             ],
-            credit: t.credit - amount // Deduct the bid amount from credits
+            credit: t.credit - amount
           };
         }
         return t;
@@ -212,7 +222,6 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
 
       setTeams(updatedTeams);
 
-      // Remove the player from the players list
       const updatedPlayers = players.filter(p => p.id !== player.id);
       setPlayers(updatedPlayers);
     };
@@ -226,9 +235,10 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
             return prevTimer - 1;
           } else {
             clearInterval(intervalId);
-            setShowResult(true); // Show result when timer reaches 0
-            updateTeams(); // Update teams after timer ends
-            setTimeout(() => navigate('/'),3000)
+            setShowResult(true);
+            setIsFinalBid(true); // Set isFinalBid to true when timer reaches 0
+            updateTeams();
+            setTimeout(() => navigate('/'), 3000);
             return 0;
           }
         });
@@ -236,7 +246,7 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
     }
 
     return () => clearInterval(intervalId);
-  }, [bid, player, timer, setTeams, setPlayers]);
+  }, [bid, player, timer, setTeams, setPlayers, isFinalBid, navigate]);
 
   const roleMap = {
     'P': 'Portiere',
@@ -273,21 +283,30 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
 
   return (
     <Container className="my-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
+      <Row>
+        <Col md={8} className="mx-auto">
           <Card>
             <Card.Body>
-              <Card.Title className="text-center">Asta per {player.nome}</Card.Title>
-              <Card.Subtitle className="mb-3 text-muted text-center">{roleName}</Card.Subtitle>
+              <Card.Title className="text-center">Offerta per {player.nome}</Card.Title>
+              <p className="text-center">Ruolo: {roleName}</p>
               <BidTimer timer={timer} />
               <BidResult bid={bid} showResult={showResult} />
-              <Button variant="secondary" className="mt-3 w-100" onClick={() => navigate('/')}>
-                Indietro
-              </Button>
+              <Row className="text-center">
+                <Col>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      setBid(null); // Reset bid
+                      setTimer(5); // Reset timer
+                      setShowResult(false); // Hide result
+                    }}
+                  >
+                    Reset
+                  </Button>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
-        </Col>
-        <Col md={4}>
           <MaximumBidTable teams={teams} />
         </Col>
       </Row>
