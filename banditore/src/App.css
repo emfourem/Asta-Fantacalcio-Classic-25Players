@@ -1,0 +1,135 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #343a40;
+}
+
+.navbar-brand {
+  color: #ffffff !important;
+}
+
+.nav-link {
+  color: #ffffff !important;
+}
+
+.nav-link:hover {
+  color: #adb5bd !important;
+}
+
+/* Footer styling */
+footer {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+footer p {
+  margin: 0;
+}
+
+/* Main container styling */
+.container-fluid {
+  padding: 0;
+}
+
+/* Header and footer margins */
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+/* Page content styling */
+h1, h2, h3, h4, h5, h6 {
+  color: #212529;
+}
+
+/* Button styling */
+button {
+  margin: 0.5rem;
+}
+
+button:hover {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+/* Card styling */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  padding: 1rem;
+}
+
+/* Flexbox utility classes */
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+/* Spacing utilities */
+.p-4 {
+  padding: 1.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+/* Spinner styling */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.25rem;
+}
+
+/* Custom classes for layout */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+/* Centering content */
+.text-center {
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .navbar-collapse {
+    text-align: center;
+  }
+  
+  .navbar-nav {
+    margin-top: 1rem;
+  }
+  
+  .card {
+    margin: 0.5rem;
+  }
+}

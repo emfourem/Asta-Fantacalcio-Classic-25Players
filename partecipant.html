@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bidder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 500px;
+    }
+    input {
+      display: block;
+      width: calc(100% - 24px); /* Adjust width to account for padding */
+      padding: 12px;
+      margin: 12px auto;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    #confirmButton {
+      background-color: #28a745;
+      color: #fff;
+      width: 100%;
+      max-width: 300px;
+    }
+    #confirmButton:hover {
+      background-color: #218838;
+    }
+    #bidButton {
+      display: none;
+      font-size: 24px;
+      border-radius: 50%;
+      background-color: #007bff;
+      color: #fff;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      width: 200px; /* Adjust diameter */
+      height: 200px; /* Adjust diameter */
+      line-height: 160px; /* Align text vertically */
+      text-align: center; /* Center text horizontally */
+      margin: 20px auto;
+      font-weight: bold;
+      position: relative;
+    }
+    #bidButton:hover {
+      background-color: #0056b3;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+    #bidButton span {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal; /* Ensure text centers properly */
+    }
+    .message {
+      margin-top: 20px;
+      color: #28a745;
+      font-size: 20px;
+    }
+  </style>
+  <script>
+    let bidderId;
+    let bidderName;
+    let isConfirmed = false;
+    let serverIp = '';
+
+    function confirmBidder() {
+      bidderId = document.getElementById('bidderId').value;
+      bidderName = document.getElementById('bidderName').value;
+      serverIp = document.getElementById('serverIp').value;
+      document.getElementById('bidderForm').style.display = 'none';
+      document.getElementById('bidButton').style.display = 'block';
+      isConfirmed = true;
+    }
+
+    async function placeBid() {
+      if (isConfirmed) {
+        try {
+          const response = await fetch(`http://${serverIp}:5000/bid`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: bidderId, name: bidderName })
+          });
+
+          if (response.ok) {
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+
+            // Hide message after 1 second
+            setTimeout(() => {
+              successMessage.style.display = 'none';
+            }, 1000);
+          } else {
+            console.error('Bid submission failed');
+          }
+        } catch (error) {
+          console.error('Error placing bid:', error);
+        }
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('bidderId').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          confirmBidder();
+        }
+      });
+      document.getElementById('bidderName').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          confirmBidder();
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Asta</h1>
+    <div id="bidderForm">
+      <input type="text" id="serverIp" placeholder="Inserisci l'IP del server" />
+      <input type="text" id="bidderId" placeholder="Inserisci l'ID assegnato al tuo Team" />
+      <input type="text" id="bidderName" placeholder="Inserisci il nome del tuo Team" />
+      <button id="confirmButton" onclick="confirmBidder()">Conferma</button>
+    </div>
+    <button id="bidButton" onclick="placeBid()">
+      <span>Offri</span>
+    </button>
+    <div id="successMessage" class="message" style="display: none;">Offerta fatta!</div>
+  </div>
+</body>
+</html>
