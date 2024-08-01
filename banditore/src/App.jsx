@@ -82,20 +82,16 @@ function Footer() {
   );
 }
 
-function Header() {
+function Header({ searchTerm, setSearchTerm }) {
   return (
     <Navbar expand="lg" bg="dark" variant="dark">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">Fantacalcio</Navbar.Brand> {/* Use Link for internal navigation */}
+        <Navbar.Brand as={Link} to="/">Fantacalcio</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: '100px' }}
-            navbarScroll
-          >
-            <Nav.Link as={Link} to="/">Home</Nav.Link> {/* Use Link for internal navigation */}
-            <Nav.Link as={Link} to="/squadre">Squadre</Nav.Link> {/* Use Link for internal navigation */}
+          <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
+            <Nav.Link as={Link} to="/squadre">Squadre</Nav.Link>
           </Nav>
           <Form className="d-flex">
             <Form.Control
@@ -103,6 +99,8 @@ function Header() {
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             <Button variant="outline-success">Search</Button>
           </Form>
@@ -112,15 +110,15 @@ function Header() {
   );
 }
 
-function PlayersRoute({ players, setPlayer, filters, setFilters, initialFilters }) {
+function PlayersRoute({ players, setPlayer, filters, setFilters, initialFilters, searchTerm }) {
   const navigate = useNavigate();
-
 
   // Filter and sort players
   const filteredPlayers = players
     .filter(player => (filters.role === '' || player.ruolo === filters.role))
     .filter(player => (filters.searchName === '' || player.nome.toLowerCase().includes(filters.searchName.toLowerCase())))
     .filter(player => (filters.squadra === '' || player.squadra === filters.squadra))
+    .filter(player => player.nome.toLowerCase().includes(searchTerm.toLowerCase())) // Add searchTerm filter
     .sort((a, b) => {
       if (filters.priceSort === 'asc') {
         return a.quotazione - b.quotazione;
@@ -155,7 +153,7 @@ function PlayersRoute({ players, setPlayer, filters, setFilters, initialFilters 
     <Container className="my-5">
       <Row className="justify-content-center">
         <Col md={10}>
-          <h2 className="mb-4">Elenco Giocatori</h2>
+          <h2 className="mb-4 text-center">Elenco Giocatori</h2>
           
           {/* Filters */}
           <Form className="mb-4">
@@ -271,7 +269,6 @@ function PlayersRoute({ players, setPlayer, filters, setFilters, initialFilters 
   );
 }
 
-
 /**
  * The route for nonexisting URLs.
  * 
@@ -289,13 +286,9 @@ function DefaultRoute() {
 
 
 function App() {
-
   const [players, setPlayers] = useState([]);
-
-  const [player, setPlayer] = useState(null)
-
+  const [player, setPlayer] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [teams, setTeams] = useState([]);
 
   // Define initial filter states
@@ -308,6 +301,9 @@ function App() {
 
   // Initialize state with filters
   const [filters, setFilters] = useState(initialFilters);
+
+  // Add searchTerm state
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     async function fetchPlayers() {
@@ -348,21 +344,42 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/' element={<Layout />}>
-        <Route index element={
-          loading ? (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Caricamento</span>
-              </Spinner>
-            </div>
-          ) : (
-            <PlayersRoute players={players} setPlayer = {setPlayer} filters = {filters} setFilters = {setFilters} initialFilters = {initialFilters} />
-          )
-        } />
-        <Route path='/squadre' element={<Teams teams = {teams} setTeams = {setTeams} />} />
-        <Route path='/asta' element={<PlayerBid teams = {teams} setTeams = {setTeams} player = {player} setPlayer = {setPlayer} players={players} setPlayers = {setPlayers}/>} />        
-        <Route path='/*' element={<DefaultRoute />} />
+      <Route path="/" element={<Layout searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}>
+        <Route
+          index
+          element={
+            loading ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Caricamento</span>  
+
+                </Spinner>
+              </div>
+            ) : (
+              <>
+                {/* Conditionally render button based on teams state */}
+                {!teams.length && (
+                  <div className="d-flex justify-content-center mb-4 mt-4">
+                    <Button variant="primary" as={Link} to="/squadre" className="py-2 px-4">
+                      Crea Squadre
+                    </Button>
+                  </div>
+                )}
+                <PlayersRoute
+                  players={players}
+                  setPlayer={setPlayer}
+                  filters={filters}
+                  setFilters={setFilters}
+                  initialFilters={initialFilters}
+                  searchTerm={searchTerm} // Pass searchTerm to PlayersRoute
+                />
+              </>
+            )
+          }
+        />
+        <Route path="/squadre" element={<Teams teams={teams} setTeams={setTeams} />} />
+        <Route path="/asta" element={<PlayerBid teams={teams} setTeams={setTeams} player={player} setPlayer={setPlayer} players={players} setPlayers={setPlayers} />} />
+        <Route path="/*" element={<DefaultRoute />} />
       </Route>
     </Routes>
   );
@@ -374,12 +391,12 @@ function App() {
  * @returns JSX for the Layout component
  */
 
-function Layout() {
+function Layout({ searchTerm, setSearchTerm }) {
   return (
     <Container fluid className="d-flex flex-column min-vh-100">
       <Row>
         <Col>
-          <Header />
+          <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </Col>
       </Row>
       <Row className="flex-grow-1">

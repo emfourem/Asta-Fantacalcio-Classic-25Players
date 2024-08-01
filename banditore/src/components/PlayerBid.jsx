@@ -200,6 +200,7 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
               ...t[lowercaseRole],
               {
                 player: player.nome,
+                id: player.id,
                 amount: amount
               }
             ],
