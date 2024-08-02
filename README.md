@@ -1,5 +1,7 @@
 # Fantacalcio Auction Management Tool
 
+## This project is created to facilitate the management of the Fantacalcio Auction. Some errors may be present, as it was developed in just 2 days. Please let me know if you have any ideas or improvements.
+
 ## How to Use the Tool
 
 1. **Create Teams**:
