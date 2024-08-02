@@ -1,5 +1,60 @@
 # Fantacalcio Auction Management Tool
 
+## Explanation
+
+This is a tool for managing the Fantacalcio Auction. The tool allows you to manage Auctions for Classic Fantacalcio mode where 25 players are needed (3 goalkeepers, 8 defenders, 8 midfielders, 6 forwards). At the end of the Auction, in the section "Squadre," you can click the "Genera Squadre" button which allows you to generate the `rosters.csv` file that can be later used for importing squads on the Fantacalcio App.
+
+### Auction Management
+
+1. **Auction Interface**: 
+   - The tool provides an interface where you can conduct the auction. This involves nominating players, placing bids, and keeping track of which players are bought by which participants.
+
+2. **Player Categorization**:
+   - Players are categorized by their positions (goalkeepers, defenders, midfielders, forwards). The tool ensures that you adhere to the required distribution of players when building your squad.
+
+### Team Management
+
+1. **Squad Composition**:
+   - You need to build a squad of 25 players with the specified composition (3 goalkeepers, 8 defenders, 8 midfielders, 6 forwards). The tool helps you monitor and manage this requirement throughout the auction.
+
+2. **Squad Tracking**:
+   - The tool keeps track of the players you have successfully bid for and adds them to your squad. It also tracks the remaining budget and ensures you stay within your financial limits.
+
+### Generating Rosters
+
+1. **Squad Generation**:
+   - At the end of the auction, you can navigate to the "Squadre" (Teams) section in the tool.
+
+2. **Generate Rosters**:
+   - By clicking the "Genera Squadre" (Generate Squads) button, the tool generates a `rosters.csv` file. This file contains the details of all the teams and their players, formatted for import into the Fantacalcio App.
+
+3. **CSV File for Import**:
+   - The `rosters.csv` file is structured to be compatible with the Fantacalcio App, allowing for easy import of the auction results. This means you can seamlessly transition from the auction to managing your team within the app.
+
+### Summary of Key Steps
+
+1. **Conduct Auction**:
+   - Use the tool to bid on players and build your team.
+   - Ensure you acquire the required number of players for each position.
+   
+2. **Manage Team**:
+   - Track your squad composition and budget.
+   
+3. **Generate Rosters File**:
+   - Navigate to the "Squadre" section.
+   - Click "Genera Squadre" to produce the `rosters.csv` file.
+   
+4. **Import to App**:
+   - Use the generated `rosters.csv` file to import your squad into the Fantacalcio App.
+
+### Benefits
+
+- **Efficiency**: The tool simplifies the complex auction process, making it easier to manage bids and team composition.
+- **Accuracy**: Automated tracking ensures you comply with the squad composition rules.
+- **Convenience**: The ability to generate a `rosters.csv` file for direct import into the app saves time and reduces the risk of manual errors.
+
+In essence, the Fantacalcio Auction Management Tool is designed to facilitate the auction process, manage team compositions, and streamline the transition to the Fantacalcio App, providing a comprehensive solution for fantasy football enthusiasts.
+
 ## Setup Instructions
 
 You can set up the Fantacalcio Auction Management Tool using one of the following methods:
