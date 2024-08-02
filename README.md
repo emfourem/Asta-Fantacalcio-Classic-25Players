@@ -160,6 +160,8 @@ Follow these steps for a manual setup of the tool.
 
 4. **Verify IP and Squad Name**: Ensure the IP address and squad name entered match those displayed in the React app’s team table. If there’s a mismatch, the tool won’t function correctly.
 
+5. **Open the page on a web browser and not directly from WhatsApp or Telegram**.
+
 ---
 
 ### Option 2: Automated Setup Script
@@ -179,7 +181,7 @@ For a streamlined setup, you can use the provided script, which automates the ab
     bash setup_fanta_asta.sh "your_username_Fantacalcio.it" "your_password_Fantacalcio.it"
     ```
 
-3. **Open `partecipant.html` on each device**. Each participant needs their own device.
+3. **Open `participant.html` on each device**. Each participant needs their own device.
 
 4. **Ensure all devices are on the same network** (Wi-Fi or Ethernet).
 
@@ -189,3 +191,5 @@ For a streamlined setup, you can use the provided script, which automates the ab
     - **Squad Name**: Enter the exact name of your squad, paying attention to capitalization and spaces.
 
 6. **Verify IP and Squad Name**: Ensure the IP address and squad name entered match those displayed in the React app’s team table. If there’s a mismatch, the tool won’t function correctly.
+  
+7. **Open the page on a web browser and not directly from WhatsApp or Telegram**.
