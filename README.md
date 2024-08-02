@@ -1,5 +1,29 @@
 # Fantacalcio Auction Management Tool
 
+## How to Use the Tool
+
+1. **Create Teams**:
+    - On the main page of the App, click on the "Crea Squadre" (Create Teams) button.
+    - Insert the number of teams and confirm.
+    - Set the name of each team. 
+    - **Note**: The team name must be the same as the one inserted on the `participant.html` page by all participants. Additionally, the IP requested in `participant.html` must be configured correctly on each page and must correctly reflect the server's IP.
+
+2. **Start the Auction**:
+    - After creating the teams, you can start the auction.
+    - Select a player and click the "Asta" (Auction) button.
+
+3. **Conduct the Auction**:
+    - When the page for the auction of a specific player is opened, each participant can send their bid and wait for the result. Sending a bid means increasing the current bid by 1.
+
+4. **Automatic Player Assignment**:
+    - When the auction ends, the player is automatically saved into the winning team. This process is fully automated, so you don't need to manually assign players.
+
+5. **Generate Rosters**:
+    - Once all the teams are complete, you can generate the rosters by clicking on "Genera Squadre" (Generate Teams).
+    - The `rosters.csv` file will be automatically downloaded.
+
+
+
 ## Explanation
 
 This is a tool for managing the Fantacalcio Auction. The tool allows you to manage Auctions for Classic Fantacalcio mode where 25 players are needed (3 goalkeepers, 8 defenders, 8 midfielders, 6 forwards). At the end of the Auction, in the section "Squadre," you can click the "Genera Squadre" button which allows you to generate the `rosters.csv` file that can be later used for importing squads on the Fantacalcio App.
@@ -123,7 +147,7 @@ Follow these steps for a manual setup of the tool.
 
 #### 5. Set Up Participant Devices
 
-1. **Open `partecipant.html` on each device**. Each participant needs their own device.
+1. **Open `participant.html` on each device**. Each participant needs their own device.
 
 2. **Ensure all devices are on the same network** (Wi-Fi or Ethernet).
 
