@@ -86,7 +86,7 @@ function Header({ searchTerm, setSearchTerm }) {
   return (
     <Navbar expand="lg" bg="dark" variant="dark">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/" className='p-4'>Fantacalcio</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className='p-2'>Fantacalcio</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
@@ -352,7 +352,6 @@ function App() {
               <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
                 <Spinner animation="border" role="status">
                   <span className="visually-hidden">Caricamento</span>  
-
                 </Spinner>
               </div>
             ) : (
