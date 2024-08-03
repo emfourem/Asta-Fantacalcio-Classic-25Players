@@ -55,7 +55,7 @@ function Teams({ teams, setTeams }) {
 
     let csvContent = "";
 
-    teams.forEach((team, teamIndex) => {
+    teams.forEach((team) => {
       csvContent += "$,$,$\n";
       team.p.forEach((player) => {
         csvContent += `${team.name},${player.id},${player.amount}\n`;
@@ -102,8 +102,8 @@ function Teams({ teams, setTeams }) {
                         value={teamCount}
                         onChange={(e) => setTeamCount(e.target.value)}
                         placeholder="Inserisci il numero di squadre"
-                        min="4"
-                        max="14"
+                        min="2"
+                        max="12"
                         className="mb-3"
                       />
                     </Form.Group>
@@ -202,13 +202,11 @@ function Teams({ teams, setTeams }) {
                     ))}
                   </tbody>
                 </Table>
-                <Row className="justify-content-center mb-4">
-                  <Col xs="auto">
-                    <Button variant="primary" as={Link} to="/" className="py-2 px-4">
+                <Row className="mb-4 d-flex justify-content-center">
+                  <Col xs="auto" className="d-flex align-items-center">
+                    <Button variant="primary" as={Link} to="/" className="py-2 px-4 me-2">
                       Indietro
                     </Button>
-                  </Col>
-                  <Col xs="auto">
                     <Button variant="primary" onClick={generateCSV} className="py-2 px-4">
                       Genera Squadre
                     </Button>

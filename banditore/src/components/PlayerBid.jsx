@@ -8,6 +8,85 @@ import '../App.css'; // Import the CSS file
 
 const socket = io('http://localhost:5000'); // Replace with your server's IP address
 
+
+// Helper function to get players grouped by team and role
+function getGroupedRolePlayers(teams, role) {
+  const grouped = {};
+
+  teams.forEach(team => {
+    if (team[role]) {
+      team[role].forEach(player => {
+        if (!grouped[team.name]) {
+          grouped[team.name] = [];
+        }
+        grouped[team.name].push(player);
+      });
+    }
+  });
+
+  return grouped;
+}
+
+// RolePlayersTable Component
+function RolePlayersTable({ teams, player }) {
+  const roleList = {
+    'P': 'p',
+    'D': 'd',
+    'C': 'c',
+    'A': 'a'
+  };
+  const roleMap = {
+    'P': 'Portieri',
+    'D': 'Difensori',
+    'C': 'Centrocampisti',
+    'A': 'Attaccanti'
+  };
+  
+  const role = roleList[player?.ruolo];
+  if (!role) return null;
+
+  const groupedPlayers = getGroupedRolePlayers(teams, role);
+
+  const roleName = roleMap[player.ruolo] || 'Unknown Role';
+
+  return (
+    <Card>
+      <Card.Body>
+        <Card.Title className="text-center"> {roleName} </Card.Title>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th>Squadra</th>
+              <th>Spesi</th>
+              <th>Giocatori</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(groupedPlayers).length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center">Nessun giocatore trovato</td>
+              </tr>
+            ) : (
+              Object.entries(groupedPlayers).map(([teamName, players]) => {
+                const totalAmount = players.reduce((sum, player) => sum + player.amount, 0);
+                const playerNames = players.map(p => p.player).join(', ');
+
+                return (
+                  <tr key={teamName}>
+                    <td>{teamName}</td>
+                    <td>{totalAmount}</td>
+                    <td>{playerNames}</td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </Table>
+      </Card.Body>
+    </Card>
+  );
+}
+
 // Helper function to calculate the remaining budget and maximum bid
 function calculateMaxBid(team) {
   const totalSpent = team.p.reduce((sum, player) => sum + player.amount, 0) +
@@ -86,7 +165,7 @@ function MaximumBidTable({ teams }) {
         <Table striped bordered hover responsive>
           <thead>
             <tr>
-              <th>Nome Squadra</th>
+              <th>Squadra</th>
               <th>Crediti</th>
               <th>Massima Offerta</th>
               <th>P</th>
@@ -284,7 +363,10 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
   return (
     <Container className="my-5">
       <Row>
-        <Col md={8} className="mx-auto">
+        <Col md={3} className="mx-auto">
+          <RolePlayersTable teams={teams} player={player}/>
+        </Col>
+        <Col md={9} className="mx-auto">
           <Card>
             <Card.Body>
               <Card.Title className="text-center">Offerta per {player.nome}</Card.Title>
@@ -305,9 +387,9 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
                   </Button>
                 </Col>
               </Row>
+              <MaximumBidTable teams={teams} />
             </Card.Body>
           </Card>
-          <MaximumBidTable teams={teams} />
         </Col>
       </Row>
     </Container>
