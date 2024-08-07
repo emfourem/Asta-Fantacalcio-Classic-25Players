@@ -123,7 +123,7 @@ Follow these steps for a manual setup of the tool.
     python server.py
     ```
 
-2. **Note the address** where the server is listening. You will need this address later.
+2. **Note the address** where the server is listening. You will need this address later. Don't use IP Addresses like 0.0.0.0:xxx or 127.0.0.1:xxx.
 
 #### 4. Run the Banditore App
 
@@ -186,7 +186,7 @@ For a streamlined setup, you can use the provided script, which automates the ab
 4. **Ensure all devices are on the same network** (Wi-Fi or Ethernet).
 
 5. **Enter the following details** on each device:
-    - **Server IP Address**: Use the IP address noted from the server in step 3.
+    - **Server IP Address**: Use the IP address noted from the server readable in the terminal opened after the script execution. Don't use IP Addresses like 0.0.0.0:xxx or 127.0.0.1:xxx.
     - **Squad ID**: Enter the ID of your squad.
     - **Squad Name**: Enter the exact name of your squad, paying attention to capitalization and spaces.
 
