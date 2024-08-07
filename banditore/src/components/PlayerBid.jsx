@@ -89,16 +89,9 @@ function RolePlayersTable({ teams, player }) {
 
 // Helper function to calculate the remaining budget and maximum bid
 function calculateMaxBid(team) {
-  const totalSpent = team.p.reduce((sum, player) => sum + player.amount, 0) +
-    team.d.reduce((sum, player) => sum + player.amount, 0) +
-    team.c.reduce((sum, player) => sum + player.amount, 0) +
-    team.a.reduce((sum, player) => sum + player.amount, 0);
-
   const currentPlayerCount = team.p.length + team.d.length + team.c.length + team.a.length;
-  const remainingPlayers = 25 - currentPlayerCount - 1; // Adjust for 1 more player
-
-  const minRequiredForPlayers = remainingPlayers;
-  const maxBid = team.credit - totalSpent - minRequiredForPlayers;
+  const remainingPlayers = 25 - currentPlayerCount -1; // Adjust for 1 more player
+  const maxBid = team.credit - remainingPlayers;
 
   return maxBid;
 }
@@ -219,6 +212,7 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
       const newBidAmount = (bid?.amount || 0) + 1;
 
       if (newBidAmount > maxBid) {
+        console.log('Bid amount exceeds max bid:', newBidAmount, '>', maxBid);
         return;
       }
 
