@@ -189,6 +189,25 @@ function MaximumBidTable({ teams }) {
   );
 }
 
+async function logBidToFile(player, role, id, teamName, amount) {
+  try {
+    const response = await fetch('http://localhost:5000/logBid', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ player, role, id, teamName, amount })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to log bid');
+    }
+  } catch (error) {
+    console.error('Error logging bid to file:', error);
+  }
+}
+
+
 // Main PlayerBid Component
 function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) {
   const navigate = useNavigate();
@@ -212,7 +231,6 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
       const newBidAmount = (bid?.amount || 0) + 1;
 
       if (newBidAmount > maxBid) {
-        console.log('Bid amount exceeds max bid:', newBidAmount, '>', maxBid);
         return;
       }
 
@@ -297,6 +315,9 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
 
       const updatedPlayers = players.filter(p => p.id !== player.id);
       setPlayers(updatedPlayers);
+
+      // Log the bid to the file
+      logBidToFile(player.nome, player.ruolo, player.id, teamName, amount);
     };
 
     let intervalId;
@@ -339,7 +360,7 @@ function PlayerBid({ teams, setTeams, player, setPlayer, players, setPlayers }) 
             <Card>
               <Card.Body>
                 <Card.Title className="text-center">
-                  {playerNotSelected ? 'Nessun giocatore selezionato.' : 'Nessuna squadra presente.'}
+                  Seleziona un giocatore o controlla di aver correttamente creato le squadre.
                 </Card.Title>
                 <Button variant="secondary" className="mt-3 w-100" onClick={() => { setPlayer(null); navigate(-1); }}>
                   Indietro

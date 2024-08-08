@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Col, Container, Row, Navbar, Button, Nav, Spinner, Form, Table } from 'react-bootstrap';
 import { Routes, Route, Outlet, Link, useNavigate } from 'react-router-dom';
 import { MDBFooter, MDBContainer, MDBBtn } from 'mdb-react-ui-kit';
-import Papa from 'papaparse'; // Import PapaParse
+import Papa from 'papaparse';
 import Teams from './components/Teams';
 import PlayerBid from './components/PlayerBid';
 
@@ -92,6 +92,7 @@ function Header({ searchTerm, setSearchTerm }) {
           <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/squadre">Squadre</Nav.Link>
+            <Nav.Link as={Link} to="/riprendiAsta">Riprendi</Nav.Link>
           </Nav>
           <Form className="d-flex">
             <Form.Control
@@ -376,7 +377,7 @@ function App() {
             )
           }
         />
-        <Route path="/squadre" element={<Teams teams={teams} setTeams={setTeams} />} />
+        <Route path="/squadre" element={<Teams teams={teams} setTeams={setTeams} players={players} setPlayers={setPlayers}/>} />
         <Route path="/asta" element={<PlayerBid teams={teams} setTeams={setTeams} player={player} setPlayer={setPlayer} players={players} setPlayers={setPlayers} />} />
         <Route path="/*" element={<DefaultRoute />} />
       </Route>

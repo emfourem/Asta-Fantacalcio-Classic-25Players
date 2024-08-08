@@ -3,12 +3,66 @@ import { Container, Row, Col, Form, Button, Table, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { saveAs } from 'file-saver';
 
-function Teams({ teams, setTeams }) {
+function Teams({ teams, setTeams, players, setPlayers }) {
   const [teamCount, setTeamCount] = useState('');
   const [teamNames, setTeamNames] = useState([]);
   const [isNaming, setIsNaming] = useState(false);
   const [error, setError] = useState('');
+  const [importFile, setImportFile] = useState(null); // State to hold the imported file
+
   const requiredPlayers = { p: 3, d: 8, c: 8, a: 6 };
+
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setImportFile(e.target.files[0]);
+  };
+
+  const handleFileImport = () => {
+    if (!importFile) {
+      setError('Per favore, seleziona un file da importare.');
+      return;
+    }
+    
+    console.log("aoooo");
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const lines = event.target.result.split('\n');
+      const updatedTeams = [...teams]; // Create a copy of the existing teams
+  
+      lines.forEach(line => {
+        const match = line.match(/Squadra: (.*?), Giocatore: (.*?), Ruolo: (.*?), Id: (\d+), Crediti: (\d+)/);
+        if (match) {
+          const [, teamName, playerName, playerRole, playerId, playerAmount] = match;
+          const amount = Number(playerAmount);
+          const player = { player: playerName, id: playerId, amount: amount };
+  
+          // Find the team in the existing teams
+          const teamIndex = updatedTeams.findIndex(t => t.name === teamName);
+          if (teamIndex === -1) {
+            console.error(`La squadra '${teamName}' non è stata trovata.`);
+            return;
+          }
+  
+          const team = updatedTeams[teamIndex];
+          if (playerRole === 'p') team.p.push(player);
+          else if (playerRole === 'd') team.d.push(player);
+          else if (playerRole === 'c') team.c.push(player);
+          else if (playerRole === 'a') team.a.push(player);
+  
+          // Deduct player amount from team credits
+          team.credit -= amount;
+  
+          // Remove player from the global player list
+          setPlayers((prevPlayers) => prevPlayers.filter(p => p.id !== playerId));
+        }
+      });
+  
+      setTeams(updatedTeams);
+    };
+  
+    reader.readAsText(importFile);
+    setError('');
+  };
 
   const handleTeamCountSubmit = (e) => {
     e.preventDefault();
@@ -49,7 +103,7 @@ function Teams({ teams, setTeams }) {
 
   const generateCSV = () => {
     if (!teams.every((team) => isTeamValid(team, requiredPlayers))) {
-      alert('Attenzione! Alcune squadre non hanno il numero richiesto di giocatori per ogni ruolo.');
+      setError('Attenzione! Alcune squadre non hanno il numero richiesto di giocatori per ogni ruolo.');
       return;
     }
 
@@ -207,6 +261,17 @@ function Teams({ teams, setTeams }) {
                     <Button variant="primary" as={Link} to="/" className="py-2 px-4 me-2">
                       Indietro
                     </Button>
+                    <Form.Group className="d-flex align-items-center me-2">
+                      <Form.Control
+                        type="file"
+                        accept=".txt"
+                        onChange={handleFileChange}
+                        className="me-2"
+                      />
+                      <Button variant="primary" onClick={handleFileImport}>
+                        Importa Squadre
+                      </Button>
+                    </Form.Group>
                     <Button variant="primary" onClick={generateCSV} className="py-2 px-4">
                       Genera Squadre
                     </Button>

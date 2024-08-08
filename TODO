@@ -1,0 +1,4 @@
+- Restart an auction from files. So, u must include a file that is updated until the generation of the rosters.csv and
+if an error will occurr, starting from that file, the auction can be resumed later. To do this a write operation for each
+operation must be needed.
+- Error management (e.g. generation of rosters.csv when all the teams are not completed)
